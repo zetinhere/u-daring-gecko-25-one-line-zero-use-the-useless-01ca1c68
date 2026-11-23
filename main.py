@@ -10,7 +10,20 @@ import os
 LINE = "I can freeze time for exactly one second \u2014 and I already used it."
 
 
+def validate(line: str) -> str:
+    """The gate is one line of 1-200 chars: enforce it in-program, not just by eye."""
+    stripped = line.strip()
+    if not stripped:
+        raise ValueError("entry must not be empty")
+    if "\n" in stripped or "\r" in stripped:
+        raise ValueError("entry must be a single line")
+    if len(stripped) > 200:
+        raise ValueError(f"entry is {len(stripped)} chars, over the 200-char cap")
+    return stripped
+
+
 def main() -> None:
+    line = validate(LINE)
     # The harness sandbox mounts /output; fall back to a local output dir
     # so the program also runs cleanly outside the sandbox.
     candidates = ["/output", os.path.join(os.getcwd(), "output")]
